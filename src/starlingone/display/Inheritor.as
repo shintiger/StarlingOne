@@ -9,6 +9,7 @@
 	import starlingone.animation.TweenChain;
 	import starling.events.Event;
 	import starlingone.events.PropertyEvent;
+	import starling.display.DisplayObjectContainer;
 
 	public class Inheritor extends Sprite{
 		protected var _assetManager:AssetManager;
@@ -21,8 +22,9 @@
 		private var _padding:Number=0;
 		private var _tweenChain:TweenChain;
 		private var _isWaiting:Boolean = false;
-		protected var _presetWidth:Number=0;
-		protected var _presetHeight:Number=0;
+		protected var _presetWidth:Number = 0;
+		protected var _presetHeight:Number = 0;
+		public var viewParent:DisplayObjectContainer;
 		public function Inheritor() {
 			// constructor code
 			super();

@@ -8,12 +8,12 @@
 			// constructor code
 			super();
 		}
-		override public function get parent():DisplayObjectContainer{
+		/*override public function get parent():DisplayObjectContainer{
 			if(super.parent==null){
 				return null;
 			}
 			return super.parent.parent as DisplayObjectContainer;
-		}
+		}*/
 	}
 	
 }

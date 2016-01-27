@@ -60,6 +60,9 @@
 			var pos:Number;
 			var averageCount:int=numCell;
 			var endGrid:Grid;
+			if(contains(_quad)){
+				removeChild(_quad);
+			}
 			if(isVertical){
 				totalLength = _viewPort.height;
 				fixedLength = _viewPort.width;
@@ -90,6 +93,7 @@
 			}
 			if(endGrid!=null){
 				append(endGrid, gs, seq/numCell);
+				endGrid.x = seq*averageLength;
 			}
 			gridSet = gs;
 			return gs;
@@ -107,17 +111,22 @@
 			return _colorize;
 		}
 		public function changeColor(col:int,percent:Number):void{
-			var rgb:Rgb = Rgb.hexToRgb(col);
-			rgb.red *= percent;
-			rgb.green *= percent;
-			rgb.blue *= percent;
-			_quad.color = rgb.toHex();
+			//var rgb:Rgb = Rgb.hexToRgb(col);
+			//rgb.red *= percent;
+			//rgb.green *= percent;
+			//rgb.blue *= percent;
+			//_quad.color = rgb.toHex();
+			var changed:int = Rgb.hexPercentage(col, percent);
+			if(col<0x777777){
+				//changed = 0xffffff-changed;
+			}
+			_quad.color = changed;
+			trace("col",_quad.color);
 		}
 		public function set colorize(col:Boolean):void{
 			_colorize = col;
 			if(col){
 				//_quad.color = Math.random()*0xffffff;
-				//_quad.alpha = 0.5;
 				_quad.alpha = 0.5;
 			}else{
 				_quad.alpha = 0;

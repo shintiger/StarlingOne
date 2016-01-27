@@ -16,6 +16,7 @@
 	import starlingone.ui.Grid;
 	import starling.animation.Tween;
 	import flash.geom.Rectangle;
+	import starlingone.display.Div;
 
 	public class Game extends StarlingOne{
 		/* PNG texture */
@@ -28,6 +29,8 @@
 			var landBoard:Board = new Board(["assets/landing", "assets/monster"]);
 			var paint:Paint = new Paint("3b4");
 			landBoard.addEventListener(TouchEvent.TOUCH, onTouch);
+			//landBoard.content.addEventListener(TouchEvent.TOUCH, onTouch);
+			//paint.addEventListener(TouchEvent.TOUCH, onTouch);
 			landBoard.addEventListener(BoardEvent.ACTIVATED, onAct);
 			landBoard.addChild(paint);
 			start(landBoard);
@@ -67,10 +70,15 @@
 				//grid.split(4, false).childAt(1).split(5, true);
 				grid.split(4, false, 0.6, true)[1].split(5, true)[3].split(8, false, 0.4);
 				subGrid = grid.gridSet[1][3][7] as Grid;
+				var div:Div = new Div(subGrid.getBounds(grid));
+				div.addChild(anim);
+				div.scrollable = true;
+				board.addChild(div);
+				div.addBackground(0xff00f0);
 				trace(subGrid.width, subGrid.height);
-				board.addChild(grid);
-				/*
-				board.addChild(cQuad);
+				//board.addChild(grid);
+				
+				/*board.addChild(cQuad);
 				board.addEventListener(BoardEvent.COMPLETED, onCompleted);
 				board.addEventListener(BoardEvent.ACTIVATED, onActivated);
 				board.addChild(anim);
