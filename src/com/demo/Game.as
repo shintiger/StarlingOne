@@ -17,6 +17,17 @@
 	import starling.animation.Tween;
 	import flash.geom.Rectangle;
 	import starlingone.display.Div;
+	import nape.geom.Vec2;
+	import starlingone.display.DefaultBridge;
+	import nape.space.Space;
+	import nape.phys.Body;
+	import nape.phys.BodyType;
+	import nape.shape.Polygon;
+	import nape.util.Debug;
+	import nape.util.BitmapDebug;
+	import starling.core.Starling;
+	import nape.phys.Material;
+	import nape.shape.Circle;
 
 	public class Game extends StarlingOne{
 		/* PNG texture */
@@ -26,21 +37,23 @@
 		public static var ratioSpeed:Number = 0.01;
 		public function Game() {
 			super(defaultBg);
-			var landBoard:Board = new Board(["assets/landing", "assets/monster"]);
-			var paint:Paint = new Paint("3b4");
+			//var landBoard:Board = new Board(["assets/landing", "assets/monster"]);
+			var landBoard:Board = new Board();
+			//var paint:Paint = new Paint("3b4");
 			landBoard.addEventListener(TouchEvent.TOUCH, onTouch);
 			//landBoard.content.addEventListener(TouchEvent.TOUCH, onTouch);
 			//paint.addEventListener(TouchEvent.TOUCH, onTouch);
 			landBoard.addEventListener(BoardEvent.ACTIVATED, onAct);
-			landBoard.addChild(paint);
+			//landBoard.addChild(paint);
 			start(landBoard);
-			//alpha = 0.2;
+			alpha = 0.2;
 		}
 		private function onAct(e:BoardEvent):void{
 			var anim:Animator = new Animator("quad", "none");
 			var landBoard:Board = e.target as Board;
 			loadGlobalAsset(["assets/movie"], function():void{
 				landBoard.addChild(anim);
+				trace("done!");
 			},
 			function(ratio:Number):void{
 				trace("global ratio:", ratio);
@@ -73,7 +86,7 @@
 				var div:Div = new Div(subGrid.getBounds(grid));
 				div.addChild(anim);
 				div.scrollable = true;
-				board.addChild(div);
+				//board.addChild(div);
 				div.addBackground(0xff00f0);
 				trace(subGrid.width, subGrid.height);
 				//board.addChild(grid);
@@ -83,8 +96,43 @@
 				board.addEventListener(BoardEvent.ACTIVATED, onActivated);
 				board.addChild(anim);
 				board.addChild(cn);*/
-				StarlingOne.switchToBoard(board);
+				//func(board);
+				var napeBoard:NapeCase = new NapeCase(["assets/test", "assets/landing"], viewport);
+				var bdg = new DefaultBridge(0.2, 0xff00ff);
+				StarlingOne.switchToBoard(napeBoard, bdg);
 			}
+		}
+		private function func(bo:Board):void{
+			var space:Space = new Space(new Vec2(0, 5000));
+			var floorPhysicsBody:Body = new Body(BodyType.STATIC);
+			var p:Polygon = new Polygon (
+				Polygon.rect(
+					0, 			// x position
+					stage.stageHeight, 	// y position
+					stage.stageWidth, 	// width
+					100			// height
+				)
+			);
+			var paint:Paint = new Paint("ff");
+			currentBoard.addChild(paint);
+			floorPhysicsBody.shapes.add(p);
+			space.bodies.add(floorPhysicsBody);
+			floorPhysicsBody.space = space;
+			var ballPhysicsBody:Body = new Body(BodyType.DYNAMIC, new Vec2(100, 100));
+			var material:Material = new Material(1.5);
+			ballPhysicsBody.shapes.add(new Circle(paint.width / 2, null, material));
+			space.bodies.add(ballPhysicsBody);
+			ballPhysicsBody.userData.graphic = paint;
+			addEventListener(EnterFrameEvent.ENTER_FRAME, function(e:EnterFrameEvent):void{
+				space.step(1 / frameRate);
+				space.liveBodies.foreach(function(b:Body):void{
+					var graphic:Paint = b.userData.graphic;
+					graphic.x = b.position.x;
+					graphic.y = b.position.y;
+					graphic.rotation = (b.rotation * 180 / Math.PI) % 360;
+				});
+			});
+			//Starling.current.nativeStage.addChild(debug.display);
 		}
 		private function onCompleted(e:BoardEvent):void{
 			var board:Board = e.target as Board;

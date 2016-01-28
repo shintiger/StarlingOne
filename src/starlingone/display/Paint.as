@@ -11,6 +11,7 @@
 		protected var _subtextureName:String;
 		protected var _texture:Texture;
 		private var _image:Image;
+		protected var _alignCenter:Boolean = false;
 		public function Paint(textureName:String=null, subtextureName:String=null) {
 			super();
 			_textureName = textureName;
@@ -43,6 +44,7 @@
 					}
 				}
 				setBgByTexture(_texture);
+				_center();
 			}
 		}
 		private function getTexture(am:AssetManager):Texture{
@@ -55,6 +57,19 @@
 			}else{
 				return am.getTexture(_textureName);
 			}
+		}
+		public function set alignCenter(ac:Boolean):void{
+			_alignCenter = ac;
+			if(_image!=null && ac){
+				_center();
+			}
+		}
+		public function get alignCenter():Boolean{
+			return _alignCenter;
+		}
+		protected function _center():void{
+			_image.x = _image.width*-0.5;
+			_image.y = _image.height*-0.5;
 		}
 		public function disposeTexture():void{
 			if(_texture!=null){

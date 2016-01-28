@@ -14,9 +14,13 @@
 	import starlingone.events.BoardEvent;
 	import starlingone.display.DefaultBridge;
 	import flash.geom.Rectangle;
+	import starling.utils.RectangleUtil;
+	import starling.utils.ScaleMode;
+	import flash.geom.Point;
 
 	public class StarlingOne extends Sprite{
-		public static var frameRate:int = 12;
+		public static const VERSION:Number=0.3;
+		public static var frameRate:int = 0;
 		public static var displayWidth:Number;
 		public static var displayHeight:Number;
 		public static var stageWidth:Number;
@@ -29,6 +33,8 @@
 		protected var isSwitching:Boolean = false;
 		private var defaultImage:Class;
 		private var defaultPaint:Paint;
+		private var _viewPort:Rectangle;
+		private var _started:Boolean = false;
 		//private var landingBoard:Board;
 		public function StarlingOne(defaultImg:Class=null) {
 			// constructor code
@@ -37,6 +43,7 @@
 			}
 			_instance = this;
 			defaultImage = defaultImg;
+			
 			if(stage!=null){
 				init();
 			}else{
@@ -49,11 +56,19 @@
 			currentBoard = landBoard;
 			globalAssets = new AssetManager();
 			currentBoard.addEventListener(BoardEvent.COMPLETED, onInitiated);
-			currentBoard.init();
+			_start();
+		}
+		private function _start():void{
+			if(!_started && currentBoard!=null && frameRate!=0){
+				currentBoard.init();
+				_started = true;
+			}
 		}
 		protected function init(e:Event=null):void{
 			removeEventListener(Event.ADDED_TO_STAGE, init);
 			
+			addEventListener(Event.RESIZE, onResize);
+			onResize();
 			stageWidth = Starling.current.nativeStage.stageWidth;
 			stageHeight = Starling.current.nativeStage.stageHeight;
 			displayWidth = stageWidth;
@@ -63,6 +78,7 @@
 				defaultPaint = Paint.createByClass(defaultImage);
 				addChild(defaultPaint);
 			}
+			_start();
 		}
 		private function onInitiated(e:Event):void{
 			if(contains(defaultPaint)){
@@ -156,7 +172,19 @@
 			isSwitching = false;
 			currentBoard.onActivate();
 		}
-		public function get viewport():Rectangle{
+		protected function onResize(e:Event=null,size:Point=null):void{
+			if(size==null){
+				return;
+			}
+			RectangleUtil.fit(
+				new Rectangle(0, 0, stage.stageWidth, stage.stageHeight),
+				new Rectangle(0, 0, size.x, size.y),
+				ScaleMode.SHOW_ALL, false,
+				Starling.current.viewPort
+			);
+			
+		}
+		public static function get viewport():Rectangle{
 			return new Rectangle(0, 0, displayWidth, displayHeight);
 		}
 	}

@@ -123,7 +123,9 @@
 				}
 			}
 		}
-		
+		override public function get numChildren():int{
+			return content.numChildren;
+		}
 		override public function addChild(child:DisplayObject):DisplayObject{
 			var obj:DisplayObject = content.addChild(child);
 			defaultBound(obj);
@@ -145,6 +147,9 @@
 		override public function removeChildAt(index:int, dispose:Boolean=false):DisplayObject{
 			return content.removeChildAt(index, dispose);
 		}
+		override public function contains(child:DisplayObject):Boolean{
+			return content.contains(child);
+		}
 		public function nativeAddChild(child:DisplayObject):DisplayObject{
 			return super.addChild(child);
 		}
@@ -160,9 +165,10 @@
 		public function nativeGetChildByName(name:String):DisplayObject{
 			return super.getChildByName(name);
 		}
-		override public function get numChildren():int{
-			return content.numChildren;
+		public function nativeContains(child:DisplayObject):Boolean{
+			return super.contains(child);
 		}
+		
 		
 		
 		/*override public function addChildAt(child:DisplayObject, index:int):DisplayObject{

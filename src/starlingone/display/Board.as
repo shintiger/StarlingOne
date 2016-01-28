@@ -35,6 +35,8 @@
 			isInited = true;
 			if(_assetManager.numQueuedAssets>0){
 				_assetManager.loadQueue(onAssetProgress);
+			}else{
+				onAssetProgress(1.0);
 			}
 		}
 		public function onActivate():void{

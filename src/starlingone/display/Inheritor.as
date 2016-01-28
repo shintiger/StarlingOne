@@ -69,7 +69,6 @@
 			spread(AssetManager, am);
 		}
 		private function spread(chgClass:Class, am:AssetManager=null, jug:Juggler=null):void{
-			trace(numChildren);
 			if(numChildren>0){
 				var obj:DisplayObject;
 				var cnode:Inheritor;
@@ -81,8 +80,6 @@
 							cnode.assetManager = _assetManager
 						else
 							cnode.juggler = _juggler;
-					}else{
-						trace("no~~");
 					}
 				}
 			}
