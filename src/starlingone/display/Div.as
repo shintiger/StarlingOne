@@ -101,8 +101,11 @@
 			super.juggler = jug;
 		}
 		public function addBackground(value:*):void{
+			trace("addBackground!");
 			if(_bound!=null){
+				trace("add a1");
 				if(value is String){
+					trace("add a2");
 					var p:Paint = new Paint(value);
 					p.addEventListener(PropertyEvent.RENDER, function(e:Event):void{
 						p.width = bound.width;
@@ -110,6 +113,7 @@
 					});
 					nativeAddChildAt(p, 0);
 				}else if(value is int){
+					trace("add a3");
 					var q:Quad = new Quad(bound.width, bound.height, value);
 					nativeAddChildAt(q, 0);
 				}

@@ -46,12 +46,12 @@
 			landBoard.addEventListener(BoardEvent.ACTIVATED, onAct);
 			//landBoard.addChild(paint);
 			start(landBoard);
-			alpha = 0.2;
+			//alpha = 0.2;
 		}
 		private function onAct(e:BoardEvent):void{
 			var anim:Animator = new Animator("quad", "none");
 			var landBoard:Board = e.target as Board;
-			loadGlobalAsset(["assets/movie"], function():void{
+			loadGlobalAsset(["assets/movie", "assets/test"], function():void{
 				landBoard.addChild(anim);
 				trace("done!");
 			},
@@ -113,16 +113,17 @@
 					100			// height
 				)
 			);
-			var paint:Paint = new Paint("ff");
+			var paint:Paint = new Paint("ball");
 			currentBoard.addChild(paint);
 			floorPhysicsBody.shapes.add(p);
-			space.bodies.add(floorPhysicsBody);
 			floorPhysicsBody.space = space;
+			//space.bodies.add(floorPhysicsBody);
 			var ballPhysicsBody:Body = new Body(BodyType.DYNAMIC, new Vec2(100, 100));
-			var material:Material = new Material(1.5);
+			var material:Material = new Material(1.7);
 			ballPhysicsBody.shapes.add(new Circle(paint.width / 2, null, material));
-			space.bodies.add(ballPhysicsBody);
+			ballPhysicsBody.space = space;
 			ballPhysicsBody.userData.graphic = paint;
+			//space.bodies.add(ballPhysicsBody);
 			addEventListener(EnterFrameEvent.ENTER_FRAME, function(e:EnterFrameEvent):void{
 				space.step(1 / frameRate);
 				space.liveBodies.foreach(function(b:Body):void{

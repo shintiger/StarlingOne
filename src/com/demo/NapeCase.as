@@ -16,6 +16,8 @@
 	import nape.shape.Circle;
 	import starlingone.StarlingOne;
 	import starling.display.Quad;
+	import starlingone.display.Div;
+	import starlingone.display.Inheritor;
 
 	public class NapeCase extends Board{
 		private var space:Space;
@@ -24,36 +26,49 @@
 		public function NapeCase(assetQuery:Array=null, _viewport:Rectangle=null) {
 			// constructor code
 			super(assetQuery, _viewport);
-			space = new Space(new Vec2(0, 5000));
+			var d:Div = new Div(_viewport);
+			var nt:NapeTest = new NapeTest();
+			d.addBackground(0x00ff00);
+			addChild(d);
+			addChild(nt);
+			nt.addEventListener(TouchEvent.TOUCH, onTouch);
+			/*space = new Space(new Vec2(0, 1000));
 			floorPhysicsBody = new Body(BodyType.STATIC);
-			trace(_viewport.height, _viewport.width);
 			p = new Polygon (
 				Polygon.rect(
 					0, 			// x position
-					_viewport.height, 	// y position
+					500, 	// y position
 					_viewport.width, 	// width
-					100			// height
+					500			// height
 				)
 			);
+			floorPhysicsBody.shapes.add(p);
+			space.bodies.add(floorPhysicsBody);
+			//floorPhysicsBody.space = space;
+			
 			var _quad:Quad = new Quad(100, 100, 0x00ff00);
 			addChild(_quad);
 			addEventListener(BoardEvent.COMPLETED, onCompleted);
+			addEventListener(BoardEvent.ACTIVATED, onAct);*/
+			//addBackground(0xff00ff);
+		}
+		private function onAct(e:BoardEvent):void{
+			removeEventListener(BoardEvent.ACTIVATED, onAct);
+			
 			addBackground(0xf0f0f0);
 		}
 		private function onCompleted(e:BoardEvent):void{
 			removeEventListener(BoardEvent.COMPLETED, onCompleted);
 			
-			floorPhysicsBody.shapes.add(p);
-			space.bodies.add(floorPhysicsBody);
-			floorPhysicsBody.space = space;
+			
 			addBall();
 			addEventListener(TouchEvent.TOUCH, onTouch);
 		}
 		private function onTouch(e:TouchEvent):void{
-			var t:Touch = e.getTouch(this);
+			var nt:NapeTest = e.target as NapeTest;
+			var t:Touch = e.getTouch(nt);
 			if(t && t.phase == TouchPhase.BEGAN){
-				trace("woo!");
-				addBall();
+				nt.addBall(t.globalX, t.globalY);
 			}
 		}
 		private function addBall():Paint{
@@ -61,19 +76,23 @@
 			addChild(paint);
 			paint.alignCenter = true;
 			var ballPhysicsBody:Body = new Body(BodyType.DYNAMIC, new Vec2(100, 100));
-			var material:Material = new Material(1.5);
-			ballPhysicsBody.shapes.add(new Circle(paint.width / 2, null, material));
+			var material:Material = new Material(1.75);
+			ballPhysicsBody.shapes.add(new Circle(paint.width >> 1, null, material));
+			//ballPhysicsBody.space = space;
 			space.bodies.add(ballPhysicsBody);
 			ballPhysicsBody.userData.graphic = paint;
 			return paint;
 		}
 		override protected function onLoop(e:EnterFrameEvent):void{
 			super.onLoop(e);
+			return;
+			//trace(e.passedTime);
 			space.step(1 / StarlingOne.frameRate);
 			space.liveBodies.foreach(function(b:Body):void{
 				var graphic:Paint = b.userData.graphic;
 				graphic.x = b.position.x;
 				graphic.y = b.position.y;
+				trace(b.position.y);
 				graphic.rotation = (b.rotation * 180 / Math.PI) % 360;
 			});
 		}
